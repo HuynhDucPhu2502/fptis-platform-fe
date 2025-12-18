@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
-import { LoginRequest } from '../../../../models/user.model';
+import type { LoginRequest } from '../../../../models/user.model';
 import { Router } from '@angular/router';
 import { AuthStateService } from '../../../../state/auth-state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -24,6 +24,12 @@ export class LoginForm {
     username: [''],
     password: [''],
   });
+
+  showPassword = signal(false);
+
+  togglePasswordVisibility() {
+    this.showPassword.set(!this.showPassword());
+  }
 
   onSubmit() {
     const payload = this.form.getRawValue() as LoginRequest;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
 import type { RegistrationRequest } from '../../../../models/user.model';
@@ -21,6 +21,8 @@ export class RegisterForm {
   @Output() success = new EventEmitter<void>();
 
   isSubmitting = false;
+
+  showPassword = signal(false);
 
   form = this.fb.group({
     username: [''],
@@ -69,5 +71,9 @@ export class RegisterForm {
         this.cd.detectChanges();
       },
     });
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword.set(!this.showPassword());
   }
 }

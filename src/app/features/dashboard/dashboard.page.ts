@@ -7,7 +7,6 @@ import { Sidebar } from './components/sidebar/sidebar';
   selector: 'app-dashboard.page',
   imports: [RouterOutlet, Sidebar],
   templateUrl: './dashboard.page.html',
-  styleUrl: './dashboard.page.css',
 })
 export class DashboardPage {
   auth = inject(AuthStateService);

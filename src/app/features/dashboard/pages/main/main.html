@@ -1,0 +1,117 @@
+<!-- Create welcoming intern page with role cards -->
+<div class="bg-gradient-to-br from-orange-50 via-white to-orange-50">
+  <!-- Hero Section -->
+  <div class="container mx-auto px-6 py-16">
+    <!-- Welcome Header -->
+    <div class="text-center mb-16 space-y-6">
+      <!-- FPT IS Logo/Title -->
+      <div class="inline-block">
+        <h1 class="text-6xl font-bold mb-2">
+          <span class="text-gray-800">FPT</span>
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600"
+          >
+            IS</span
+          >
+        </h1>
+        <div class="h-1 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full"></div>
+      </div>
+
+      <!-- Welcome Message -->
+      <div class="space-y-4">
+        <h2 class="text-5xl font-bold text-gray-800">
+          Chào mừng
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600"
+            >Intern</span
+          >
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          Chào mừng bạn đến với FPT Information System - nơi khởi đầu hành trình công nghệ của bạn.
+          Hãy khám phá các vị trí thực tập phù hợp với đam mê của bạn!
+        </p>
+      </div>
+
+      <!-- Decorative Element -->
+      <div class="flex justify-center gap-2 mt-8">
+        <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+        <div
+          class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"
+          style="animation-delay: 0.2s"
+        ></div>
+        <div
+          class="w-2 h-2 bg-orange-300 rounded-full animate-pulse"
+          style="animation-delay: 0.4s"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Role Cards Section -->
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-gray-800 mb-3">Các vị trí thực tập</h3>
+        <p class="text-gray-600">Khám phá cơ hội phát triển nghề nghiệp cùng chúng tôi</p>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid md:grid-cols-3 gap-8">
+        @for (role of roleCards; track role.title) {
+        <div
+          class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
+        >
+          <!-- Gradient Top Border -->
+          <div class="h-2 bg-gradient-to-r" [ngClass]="role.color"></div>
+
+          <!-- Card Content -->
+          <div class="p-8 space-y-4">
+            <!-- Icon -->
+            <div
+              class="flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br"
+              [ngClass]="role.color + ' bg-opacity-10'"
+            >
+              <span class="text-4xl">{{ role.icon }}</span>
+            </div>
+
+            <!-- Title -->
+            <h4
+              class="text-2xl font-bold text-gray-800 group-hover:text-orange-600 transition-colors"
+            >
+              {{ role.title }}
+            </h4>
+
+            <!-- Description -->
+            <p class="text-gray-600 leading-relaxed">
+              {{ role.description }}
+            </p>
+
+            <!-- Hover Arrow -->
+            <div class="pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="inline-flex items-center text-orange-600 font-semibold">
+                Tìm hiểu thêm
+                <svg
+                  class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decorative Circle -->
+          <div
+            class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-gradient-to-br opacity-5 group-hover:opacity-10 transition-opacity"
+            [ngClass]="role.color"
+          ></div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

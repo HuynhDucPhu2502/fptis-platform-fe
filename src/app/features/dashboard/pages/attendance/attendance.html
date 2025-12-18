@@ -1,1 +1,278 @@
-<p>attendance works!</p>
+<!-- Redesigned with better orange accents and cleaner layout -->
+<div class="bg-gray-50 p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header with orange accent and download button -->
+    <div class="mb-10 flex items-center justify-between">
+      <div>
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Chấm Công</span>
+        </h1>
+        <p class="text-gray-600">Theo dõi giờ làm việc của bạn</p>
+      </div>
+      
+      <!-- Added download report button -->
+      <button
+        (click)="downloadReport()"
+        [disabled]="isLoading"
+        class="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-orange-600/50 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Tải Báo Cáo
+      </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10">
+      <!-- Clock Card with orange accents -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-3xl shadow-lg p-10 h-full flex flex-col relative overflow-hidden border-4 border-orange-100">
+          <!-- Orange gradient decoration -->
+          <div class="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-orange-400/20 to-transparent rounded-full blur-3xl"></div>
+          
+          <div class="flex-1 flex flex-col items-center justify-center text-center relative z-10">
+            <!-- Time Display with orange accent -->
+            <div class="mb-8">
+              <div class="text-7xl font-bold tracking-tight mb-4 flex items-center justify-center gap-2">
+                <span class="text-orange-500">{{ currentTime.split(':')[0] }}</span>
+                <span class="text-orange-300">:</span>
+                <span class="text-gray-800">{{ currentTime.split(':')[1] }}</span>
+                <span class="text-orange-300">:</span>
+                <span class="text-gray-600">{{ currentTime.split(':')[2] }}</span>
+              </div>
+              <div class="text-base text-gray-600 font-medium">
+                {{ currentDate }}
+              </div>
+            </div>
+            
+            <!-- Action Button with better orange gradient -->
+            <div class="w-full max-w-xs">
+              <button 
+                *ngIf="!currentAttendance"
+                (click)="handleCheckIn()"
+                [disabled]="isLoading"
+                class="w-full py-5 text-lg font-bold rounded-2xl bg-gradient-to-r from-orange-500 via-orange-600 to-orange-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-2xl shadow-orange-500/50 hover:shadow-orange-600/60 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300">
+                {{ isLoading ? 'Đang xử lý...' : 'Check In' }}
+              </button>
+              
+              <button 
+                *ngIf="currentAttendance && !currentAttendance.timeOut"
+                (click)="handleCheckOut()"
+                [disabled]="isLoading"
+                class="w-full py-5 text-lg font-bold rounded-2xl bg-gradient-to-r from-red-500 via-orange-600 to-red-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white shadow-2xl shadow-orange-500/50 hover:shadow-red-600/60 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300">
+                {{ isLoading ? 'Đang xử lý...' : 'Check Out' }}
+              </button>
+
+              <div 
+                *ngIf="currentAttendance && currentAttendance.timeOut"
+                class="w-full py-5 text-lg font-semibold text-gray-400 text-center rounded-2xl border-2 border-gray-200">
+                ✓ Đã hoàn thành
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Panel with orange accents -->
+      <div class="lg:col-span-3">
+        <div class="bg-white rounded-3xl shadow-lg p-10 h-full relative overflow-hidden border-t-4 border-orange-500">
+          
+          <h2 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <span class="w-2 h-8 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></span>
+            Hôm Nay
+          </h2>
+          
+          <div *ngIf="!currentAttendance" class="flex flex-col items-center justify-center h-64 text-center">
+            <div class="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+              <svg class="w-10 h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <p class="text-xl text-gray-500 font-semibold mb-2">Chưa có bản ghi</p>
+            <p class="text-sm text-gray-400">Nhấn Check In để bắt đầu làm việc</p>
+          </div>
+
+          <div *ngIf="currentAttendance" class="space-y-5">
+            <!-- Date -->
+            <div class="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-transparent border border-orange-100">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <span class="text-gray-700 font-semibold">Ngày</span>
+              </div>
+              <!-- Format date with day of week -->
+              <span class="font-bold text-gray-900 text-lg">{{ formatDate(currentAttendance.date) }}</span>
+            </div>
+            
+            <!-- Check In -->
+            <div class="flex items-center justify-between p-5 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center shadow-lg">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-gray-700 font-semibold">Giờ vào</p>
+                  <!-- Format time without milliseconds -->
+                  <p class="text-sm text-gray-500 font-medium">{{ formatTime(currentAttendance.timeIn) }}</p>
+                </div>
+              </div>
+              <span 
+                class="px-4 py-2 rounded-xl text-sm font-bold"
+                [ngClass]="getStatusClass(currentAttendance.checkInStatus)">
+                {{ formatStatus(currentAttendance.checkInStatus) }}
+              </span>
+            </div>
+            
+            <!-- Check Out -->
+            <div class="flex items-center justify-between p-5 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center shadow-lg">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16l4-4m0 0l-4-4m4 4H3m13 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-gray-700 font-semibold">Giờ ra</p>
+                  <!-- Format time without milliseconds -->
+                  <p class="text-sm text-gray-500 font-medium">{{ formatTime(currentAttendance.timeOut) }}</p>
+                </div>
+              </div>
+              <span 
+                class="px-4 py-2 rounded-xl text-sm font-bold"
+                [ngClass]="getStatusClass(currentAttendance.checkOutStatus)">
+                {{ formatStatus(currentAttendance.checkOutStatus) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Table with orange accents -->
+    <div class="bg-white rounded-3xl shadow-lg overflow-hidden border-t-4 border-orange-500">
+      <div class="px-10 py-6 bg-gradient-to-r from-orange-50 to-transparent border-b border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <span class="w-2 h-8 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></span>
+          Lịch Sử Chấm Công
+        </h2>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+              <th class="px-8 py-4 text-left text-sm font-bold uppercase tracking-wide">Ngày</th>
+              <th class="px-8 py-4 text-left text-sm font-bold uppercase tracking-wide">Giờ Vào</th>
+              <th class="px-8 py-4 text-left text-sm font-bold uppercase tracking-wide">Trạng Thái</th>
+              <th class="px-8 py-4 text-left text-sm font-bold uppercase tracking-wide">Giờ Ra</th>
+              <th class="px-8 py-4 text-left text-sm font-bold uppercase tracking-wide">Trạng Thái</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr *ngFor="let record of attendanceHistory" class="hover:bg-orange-50 transition-colors">
+              <!-- Format date and time in table -->
+              <td class="px-8 py-5 whitespace-nowrap">
+                <span class="text-sm font-bold text-gray-900">{{ formatDate(record.date) }}</span>
+              </td>
+              <td class="px-8 py-5 whitespace-nowrap">
+                <span class="text-sm text-gray-700 font-medium">{{ formatTime(record.timeIn) }}</span>
+              </td>
+              <td class="px-8 py-5 whitespace-nowrap">
+                <span 
+                  class="inline-flex px-3 py-1.5 rounded-lg text-xs font-bold"
+                  [ngClass]="getStatusClass(record.checkInStatus)">
+                  {{ formatStatus(record.checkInStatus) }}
+                </span>
+              </td>
+              <td class="px-8 py-5 whitespace-nowrap">
+                <span class="text-sm text-gray-700 font-medium">{{ formatTime(record.timeOut) }}</span>
+              </td>
+              <td class="px-8 py-5 whitespace-nowrap">
+                <span 
+                  class="inline-flex px-3 py-1.5 rounded-lg text-xs font-bold"
+                  [ngClass]="getStatusClass(record.checkOutStatus)">
+                  {{ formatStatus(record.checkOutStatus) }}
+                </span>
+              </td>
+            </tr>
+            
+            <tr *ngIf="attendanceHistory.length === 0">
+              <td colspan="5" class="px-8 py-16 text-center">
+                <div class="flex flex-col items-center">
+                  <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                  </div>
+                  <p class="text-gray-500 font-semibold text-lg">Chưa có lịch sử chấm công</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination with orange accent -->
+      <div *ngIf="totalPages > 1" class="px-8 py-5 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+        <div class="text-sm text-gray-600 font-medium">
+          Hiển thị <span class="font-bold text-orange-600">{{ currentPage * pageSize + 1 }}</span> - 
+          <span class="font-bold text-orange-600">{{ Math.min((currentPage + 1) * pageSize, totalElements) }}</span> 
+          trong tổng số <span class="font-bold text-orange-600">{{ totalElements }}</span> bản ghi
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button
+            (click)="previousPage()"
+            [disabled]="currentPage === 0"
+            class="px-5 py-2.5 rounded-xl border-2 border-gray-300 text-sm font-bold text-gray-700 hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            ← Trước
+          </button>
+          
+          <button
+            *ngFor="let page of pageNumbers"
+            (click)="goToPage(page)"
+            [class.bg-gradient-to-r]="page === currentPage"
+            [class.from-orange-500]="page === currentPage"
+            [class.to-orange-600]="page === currentPage"
+            [class.text-white]="page === currentPage"
+            [class.border-orange-600]="page === currentPage"
+            [class.shadow-lg]="page === currentPage"
+            [class.shadow-orange-500/50]="page === currentPage"
+            [class.scale-110]="page === currentPage"
+            [class.text-gray-700]="page !== currentPage"
+            [class.border-gray-300]="page !== currentPage"
+            [class.hover:border-orange-500]="page !== currentPage"
+            [class.hover:text-orange-600]="page !== currentPage"
+            [class.hover:bg-orange-50]="page !== currentPage"
+            class="px-4 py-2.5 rounded-xl border-2 text-sm font-bold transition-all">
+            {{ page + 1 }}
+          </button>
+          
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages - 1"
+            class="px-5 py-2.5 rounded-xl border-2 border-gray-300 text-sm font-bold text-gray-700 hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            Sau →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.bg-size-200 {
+  background-size: 200%;
+}
+.bg-pos-0 {
+  background-position: 0%;
+}
+.bg-pos-100:hover {
+  background-position: 100%;
+}
+</style>

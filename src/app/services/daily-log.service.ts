@@ -42,4 +42,10 @@ export class DailyLogService {
   deleteDailyLog(id: number) {
     return this.http.delete<ApiResponse<void>>(`${this.api}/${id}`, { withCredentials: true });
   }
+
+  downloadDailyLogReport() {
+    return this.http.get(`${this.api}/report`, {
+      responseType: 'blob',
+    });
+  }
 }

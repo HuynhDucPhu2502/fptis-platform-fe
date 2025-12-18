@@ -3,17 +3,36 @@
 >
   <h2 class="text-2xl font-bold text-orange-600">Nhật ký công việc</h2>
 
-  <button
-    class="px-4 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
-    (click)="openCreate()"
-  >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-    </svg>
-    Tạo nhật ký
-  </button>
+  <div class="flex gap-3">
+    <button
+      class="px-4 py-2.5 bg-white text-orange-600 font-medium rounded-lg border-2 border-orange-500 hover:bg-orange-50 transition-colors shadow-md hover:shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+      (click)="downloadReport()"
+      [disabled]="data().length === 0"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        />
+      </svg>
+      Tải báo cáo
+    </button>
+
+    <button
+      class="px-4 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
+      (click)="openCreate()"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Tạo nhật ký
+    </button>
+  </div>
 </div>
 
+<!-- Better spacing for table container -->
 <div class="p-6">
   <daily-log-table
     [data]="data()"
@@ -30,11 +49,15 @@
   ></app-pagination>
 </div>
 
+<!-- CREATE -->
 @if (showCreate()) {
 <daily-log-dialog title="Tạo nhật ký" (close)="showCreate.set(false)">
   <daily-log-create-form (submitForm)="create($event)"></daily-log-create-form>
 </daily-log-dialog>
-} @if (showUpdate()) {
+}
+
+<!-- UPDATE -->
+@if (showUpdate()) {
 <daily-log-dialog title="Cập nhật nhật ký" (close)="showUpdate.set(false)">
   <daily-log-update-form
     [initial]="selected()"

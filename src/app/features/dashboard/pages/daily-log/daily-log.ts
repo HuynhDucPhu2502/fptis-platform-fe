@@ -7,7 +7,7 @@ import { DailyLogCreateForm } from './components/daily-log-create-form/daily-log
 import { DailyLogUpdateForm } from './components/daily-log-update-form/daily-log-update-form';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { DailyLogService } from '../../../../services/daily-log.service';
-import { DailyLogResponse } from '../../../../models/daily-log.model';
+import type { DailyLogResponse } from '../../../../models/daily-log.model';
 
 @Component({
   selector: 'app-daily-log-page',
@@ -78,5 +78,16 @@ export class DailyLog {
 
   delete(id: number) {
     this.service.deleteDailyLog(id).subscribe(() => this.load());
+  }
+
+  downloadReport() {
+    this.service.downloadDailyLogReport().subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `daily-log-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 }

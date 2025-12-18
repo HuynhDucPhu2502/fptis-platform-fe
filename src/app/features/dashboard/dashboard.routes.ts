@@ -3,20 +3,25 @@ import type { Routes } from '@angular/router';
 export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'analytics',
+    redirectTo: 'main',
     pathMatch: 'full',
   },
   {
-    path: 'analytics',
-    loadComponent: () => import('./pages/analytics/analytics').then((m) => m.Analytics),
+    path: 'main',
+    loadComponent: () => import('./pages/main/main').then((m) => m.Main),
+  },
+  {
+    path: 'work-log',
+    loadComponent: () => import('./pages/daily-log/daily-log').then((m) => m.DailyLog),
   },
   {
     path: 'attendance',
     loadComponent: () => import('./pages/attendance/attendance').then((m) => m.Attendance),
   },
   {
-    path: 'work-log',
-    loadComponent: () => import('./pages/daily-log/daily-log').then((m) => m.DailyLog),
+    path: 'internal-request',
+    loadComponent: () =>
+      import('./pages/internal-request/internal-request').then((m) => m.InternalRequest),
   },
   {
     path: 'users-management',

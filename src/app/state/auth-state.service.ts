@@ -13,5 +13,6 @@ export class AuthStateService {
 
   clear() {
     this.currentUser.set(null);
+    localStorage.removeItem('access_token');
   }
 }

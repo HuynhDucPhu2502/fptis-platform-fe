@@ -8,7 +8,7 @@ export const guestGuard: CanActivateFn = () => {
 
   const token = localStorage.getItem('access_token');
 
-  if (token || auth.isLoggedIn()) {
+  if (token && auth.isLoggedIn()) {
     router.navigate(['/dashboard']);
     return false;
   }

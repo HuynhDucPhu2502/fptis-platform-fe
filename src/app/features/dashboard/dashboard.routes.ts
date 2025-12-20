@@ -19,9 +19,8 @@ export const DASHBOARD_ROUTES: Routes = [
     loadComponent: () => import('./pages/attendance/attendance').then((m) => m.Attendance),
   },
   {
-    path: 'internal-request',
-    loadComponent: () =>
-      import('./pages/internal-request/internal-request').then((m) => m.InternalRequest),
+    path: 'work-request',
+    loadComponent: () => import('./pages/work-request/work-request').then((m) => m.WorkRequest),
   },
   {
     path: 'users-management',

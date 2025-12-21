@@ -26,4 +26,5 @@ export type RegistrationRequest = {
 export type LoginRequest = {
   username: string;
   password: string;
+  isCrypted: boolean;
 };

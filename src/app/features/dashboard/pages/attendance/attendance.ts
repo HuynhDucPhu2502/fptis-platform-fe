@@ -1,17 +1,24 @@
-import { Component, type OnInit, type OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AttendanceService } from '../../../../services/attendance.service';
-import type { AttendanceResponse } from '../../../../models/attendance.model';
+import type {
+  AttendanceResponse,
+  StatusCountReportObject,
+} from '../../../../models/attendance.model';
 import type { ApiResponse, PageResponse } from '../../../../models/api-response.model';
+
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { ApexChart, ApexNonAxisChartSeries, ApexResponsive } from 'ng-apexcharts';
 
 @Component({
   selector: 'app-attendance',
-  imports: [CommonModule],
-  templateUrl: './attendance.html',
   standalone: true,
+  imports: [CommonModule, NgApexchartsModule],
+  templateUrl: './attendance.html',
 })
 export class Attendance implements OnInit, OnDestroy {
   Math = Math;
+
   currentTime = '';
   currentDate = '';
   currentAttendance: AttendanceResponse | null = null;
@@ -24,19 +31,40 @@ export class Attendance implements OnInit, OnDestroy {
   totalPages = 0;
   totalElements = 0;
 
+  // ===== STATISTIC =====
+  statusStats: StatusCountReportObject[] = [];
+
+  pieSeries: ApexNonAxisChartSeries = [];
+  pieLabels: string[] = [];
+
+  pieChart: ApexChart = {
+    type: 'pie',
+    width: 320,
+  };
+
+  pieResponsive: ApexResponsive[] = [
+    {
+      breakpoint: 768,
+      options: {
+        chart: { width: 260 },
+        legend: { position: 'bottom' },
+      },
+    },
+  ];
+
   constructor(private attendanceService: AttendanceService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.updateTime();
     this.timeInterval = setInterval(() => this.updateTime(), 1000);
+
     this.loadCurrentAttendance();
     this.loadAttendanceHistory();
+    this.loadAttendanceStatistic();
   }
 
   ngOnDestroy() {
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
+    if (this.timeInterval) clearInterval(this.timeInterval);
   }
 
   updateTime() {
@@ -52,14 +80,13 @@ export class Attendance implements OnInit, OnDestroy {
       month: 'long',
       day: 'numeric',
     });
-
     this.cdr.detectChanges();
   }
 
   loadCurrentAttendance() {
     this.attendanceService.getCurrentAttendance().subscribe({
-      next: (response: ApiResponse<AttendanceResponse>) => {
-        this.currentAttendance = response.result;
+      next: (res: ApiResponse<AttendanceResponse>) => {
+        this.currentAttendance = res.result;
         this.cdr.detectChanges();
       },
       error: () => {
@@ -71,19 +98,38 @@ export class Attendance implements OnInit, OnDestroy {
 
   loadAttendanceHistory() {
     this.attendanceService
-      .getAttendanceHistory({ page: this.currentPage, size: this.pageSize })
+      .getAttendanceHistory({
+        page: this.currentPage,
+        size: this.pageSize,
+      })
       .subscribe({
-        next: (response: ApiResponse<PageResponse<AttendanceResponse>>) => {
-          this.attendanceHistory = response.result.content;
-          this.totalPages = response.result.totalPages;
-          this.totalElements = response.result.totalElements;
-          this.currentPage = response.result.page;
+        next: (res: ApiResponse<PageResponse<AttendanceResponse>>) => {
+          this.attendanceHistory = res.result.content;
+          this.totalPages = res.result.totalPages;
+          this.totalElements = res.result.totalElements;
+          this.currentPage = res.result.page;
           this.cdr.detectChanges();
         },
-        error: (error) => {
-          console.log('[FPT IS] Error loading history:', error);
+        error: (err) => {
+          console.log('[FPT IS] history error', err);
         },
       });
+  }
+
+  loadAttendanceStatistic() {
+    this.attendanceService.getCurrentUserAttendanceStatistic().subscribe({
+      next: (res: ApiResponse<StatusCountReportObject[]>) => {
+        this.statusStats = res.result;
+
+        this.pieSeries = this.statusStats.map((i) => i.count);
+        this.pieLabels = this.statusStats.map((i) => i.status);
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.log('[FPT IS] statistic error', err);
+      },
+    });
   }
 
   handleCheckIn() {
@@ -92,12 +138,10 @@ export class Attendance implements OnInit, OnDestroy {
       next: () => {
         this.loadCurrentAttendance();
         this.loadAttendanceHistory();
+        this.loadAttendanceStatistic();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('[FPT IS] Check-in error:', error);
-        this.isLoading = false;
-      },
+      error: () => (this.isLoading = false),
     });
   }
 
@@ -107,12 +151,10 @@ export class Attendance implements OnInit, OnDestroy {
       next: () => {
         this.loadCurrentAttendance();
         this.loadAttendanceHistory();
+        this.loadAttendanceStatistic();
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('[FPT IS] Check-out error:', error);
-        this.isLoading = false;
-      },
+      error: () => (this.isLoading = false),
     });
   }
 
@@ -139,25 +181,22 @@ export class Attendance implements OnInit, OnDestroy {
 
   get pageNumbers(): number[] {
     const pages: number[] = [];
-    const maxPagesToShow = 5;
-    let startPage = Math.max(0, this.currentPage - Math.floor(maxPagesToShow / 2));
-    const endPage = Math.min(this.totalPages - 1, startPage + maxPagesToShow - 1);
+    const max = 5;
+    let start = Math.max(0, this.currentPage - Math.floor(max / 2));
+    const end = Math.min(this.totalPages - 1, start + max - 1);
 
-    if (endPage - startPage < maxPagesToShow - 1) {
-      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    if (end - start < max - 1) {
+      start = Math.max(0, end - max + 1);
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
+    for (let i = start; i <= end; i++) pages.push(i);
     return pages;
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return '—';
-    const [year, month, day] = dateString.split('-');
-    const date = new Date(Number(year), Number(month) - 1, Number(day));
-    return date.toLocaleDateString('vi-VN', {
+  formatDate(date: string): string {
+    if (!date) return '—';
+    const [y, m, d] = date.split('-');
+    return new Date(+y, +m - 1, +d).toLocaleDateString('vi-VN', {
       weekday: 'short',
       day: '2-digit',
       month: '2-digit',
@@ -165,32 +204,26 @@ export class Attendance implements OnInit, OnDestroy {
     });
   }
 
-  formatTime(timeString: string | null): string {
-    if (!timeString) return '—';
-    // Remove milliseconds if present (e.g., "17:46:07.156" -> "17:46:07")
-    const timeParts = timeString.split('.');
-    return timeParts[0];
+  formatTime(time: string | null): string {
+    if (!time) return '—';
+    return time.split('.')[0];
   }
 
   getStatusClass(status: string): string {
-    if (!status) return 'bg-gray-100 text-gray-600';
-
     switch (status) {
       case 'CHECKED_IN_ON_TIME':
       case 'CHECKED_OUT_ON_TIME':
-        return 'bg-green-50 text-green-700 border border-green-200';
+        return 'bg-green-50 text-green-700';
       case 'CHECKED_IN_LATE':
-        return 'bg-red-50 text-red-700 border border-red-200';
+        return 'bg-red-50 text-red-700';
       case 'CHECKED_OUT_EARLY':
-        return 'bg-amber-50 text-amber-700 border border-amber-200';
+        return 'bg-amber-50 text-amber-700';
       default:
         return 'bg-gray-100 text-gray-600';
     }
   }
 
   formatStatus(status: string): string {
-    if (!status) return 'Chưa có';
-
     switch (status) {
       case 'CHECKED_IN_ON_TIME':
         return 'Vào đúng giờ';
@@ -201,26 +234,23 @@ export class Attendance implements OnInit, OnDestroy {
       case 'CHECKED_OUT_EARLY':
         return 'Ra sớm';
       default:
-        return status;
+        return status || '—';
     }
   }
 
   downloadReport() {
     this.isLoading = true;
     this.attendanceService.downloadAttendanceReport().subscribe({
-      next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `BaoCao_ChamCong_${new Date().toISOString().split('T')[0]}.pdf`;
-        link.click();
-        window.URL.revokeObjectURL(url);
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `BaoCao_ChamCong_${new Date().toISOString().split('T')[0]}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
         this.isLoading = false;
       },
-      error: (error) => {
-        console.log('[FPT IS] Download report error:', error);
-        this.isLoading = false;
-      },
+      error: () => (this.isLoading = false),
     });
   }
 }

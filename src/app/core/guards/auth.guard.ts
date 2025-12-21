@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthStateService } from '../../state/auth-state.service';
-import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { lastValueFrom } from 'rxjs';
 
 export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthStateService);
-  const profile = inject(UserService);
+  const profile = inject(AuthService);
   const router = inject(Router);
 
   const token = localStorage.getItem('access_token');

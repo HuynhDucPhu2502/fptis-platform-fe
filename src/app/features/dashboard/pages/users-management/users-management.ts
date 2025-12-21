@@ -2,8 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersTableComponent } from './components/users-table/users-table';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
-import { UserService } from '../../../../services/user.service';
+import { AuthService } from '../../../../services/auth.service';
 import type { RemoteUser } from '../../../../models/user.model';
+import {UserService} from '../../../../services/user.service';
 
 @Component({
   selector: 'app-users-management-page',
@@ -12,7 +13,8 @@ import type { RemoteUser } from '../../../../models/user.model';
   templateUrl: './users-management.html',
 })
 export class UsersManagement {
-  private service = inject(UserService);
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
 
   data = signal<RemoteUser[]>([]);
   page = signal(0);
@@ -26,7 +28,7 @@ export class UsersManagement {
   }
 
   load() {
-    this.service
+    this.userService
       .getAllUsers({
         page: this.page(),
         size: this.size,

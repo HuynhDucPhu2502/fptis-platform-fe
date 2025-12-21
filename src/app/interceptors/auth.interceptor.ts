@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError, from } from 'rxjs';
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { AuthStateService } from '../state/auth-state.service';
 import type { ApiResponse as ApiResponseModel } from '../models/api-response.model';
 
@@ -12,7 +12,7 @@ let refreshQueue: Array<() => void> = [];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('access_token');
-  const userService = inject(UserService);
+  const userService = inject(AuthService);
   const authState = inject(AuthStateService);
   const router = inject(Router);
 

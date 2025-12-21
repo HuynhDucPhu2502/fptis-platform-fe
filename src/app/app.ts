@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './shared/components/header/header';
 import { Footer } from './shared/components/footer/footer';
 import { AuthStateService } from './state/auth-state.service';
-import { UserService } from './services/user.service';
+import { AuthService } from './services/auth.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -17,7 +17,7 @@ export class App implements OnInit {
   protected readonly title = signal('fptis-platform-fe');
 
   private auth = inject(AuthStateService);
-  private profile = inject(UserService);
+  private profile = inject(AuthService);
 
   async ngOnInit() {
     const token = localStorage.getItem('access_token');

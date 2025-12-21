@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
-import { UserService } from '../../../../services/user.service';
+import { AuthService } from '../../../../services/auth.service';
 import type { RegistrationRequest } from '../../../../models/user.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChangeDetectorRef } from '@angular/core';
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 })
 export class RegisterForm {
   private fb = inject(FormBuilder);
-  private profileService = inject(UserService);
+  private profileService = inject(AuthService);
   private snack = inject(MatSnackBar);
   private cd = inject(ChangeDetectorRef);
 

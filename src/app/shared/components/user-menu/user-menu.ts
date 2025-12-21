@@ -3,7 +3,7 @@ import { AuthStateService } from '../../../state/auth-state.service';
 import { getAvatarLetters } from '../../../utils/avatar.util';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserService } from '../../../services/user.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-user-menu',
@@ -15,7 +15,7 @@ export class UserMenu {
   private auth = inject(AuthStateService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
-  private profileService = inject(UserService);
+  private profileService = inject(AuthService);
 
   menuOpen = signal(false);
 

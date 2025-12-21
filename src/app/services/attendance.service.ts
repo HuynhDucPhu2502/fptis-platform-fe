@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import type { ApiResponse, PageResponse, PaginationParams } from '../models/api-response.model';
-import type { AttendanceResponse } from '../models/attendance.model';
+import type { AttendanceResponse, StatusCountReportObject } from '../models/attendance.model';
 
 @Injectable({ providedIn: 'root' })
 export class AttendanceService {
@@ -18,6 +18,10 @@ export class AttendanceService {
 
   getCurrentAttendance() {
     return this.http.get<ApiResponse<AttendanceResponse>>(`${this.api}/current`);
+  }
+
+  getCurrentUserAttendanceStatistic() {
+    return this.http.get<ApiResponse<StatusCountReportObject[]>>(`${this.api}/statistic`);
   }
 
   getAttendanceHistory({ page = 0, size = 10 }: PaginationParams) {

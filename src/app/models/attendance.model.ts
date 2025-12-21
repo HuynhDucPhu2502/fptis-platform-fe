@@ -7,3 +7,8 @@ export type AttendanceResponse = {
   checkInStatus: string;
   checkOutStatus: string;
 };
+
+export type StatusCountReportObject = {
+  status: string;
+  count: number;
+};

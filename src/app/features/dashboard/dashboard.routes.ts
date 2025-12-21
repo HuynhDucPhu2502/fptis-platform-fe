@@ -20,7 +20,18 @@ export const DASHBOARD_ROUTES: Routes = [
   },
   {
     path: 'work-request',
-    loadComponent: () => import('./pages/work-request/work-request').then((m) => m.WorkRequest),
+    redirectTo: 'work-request/list',
+    pathMatch: 'full',
+  },
+  {
+    path: 'work-request/form',
+    loadComponent: () =>
+      import('./pages/work-request/form/work-request-form').then((m) => m.WorkRequestForm),
+  },
+  {
+    path: 'work-request/list',
+    loadComponent: () =>
+      import('./pages/work-request/list/work-request-list').then((m) => m.WorkRequestList),
   },
   {
     path: 'users-management',

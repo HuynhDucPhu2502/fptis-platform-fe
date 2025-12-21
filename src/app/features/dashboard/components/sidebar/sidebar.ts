@@ -33,7 +33,7 @@ export class Sidebar implements OnInit {
     { icon: 'home', label: 'Trang Chính', href: 'main' },
     { icon: 'clock', label: 'Chấm Công', href: 'attendance' },
     { icon: 'document', label: 'Nhật Ký', href: 'work-log' },
-    { icon: 'clipboard', label: 'Yêu Cầu Nội Bộ', href: 'work-request' },
+    { icon: 'briefcase', label: 'Yêu Cầu Làm Việc', href: 'work-request' },
     {
       icon: 'users',
       label: 'Quản lý người dùng',

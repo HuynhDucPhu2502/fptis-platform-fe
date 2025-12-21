@@ -11,7 +11,6 @@ export type RemoteUser = {
 
   // Base Entity
   active: boolean;
-
   roles?: string[];
 };
 

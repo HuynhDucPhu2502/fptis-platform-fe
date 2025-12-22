@@ -1,0 +1,115 @@
+<div class="p-8 max-w-7xl mx-auto">
+  <div class="mb-10">
+    <h1 class="text-4xl font-bold mb-3">
+      <span class="text-gray-800">Quản Lý</span>
+      <span class="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+        Duyệt Yêu Cầu
+      </span>
+    </h1>
+    <p class="text-gray-600 text-lg">
+      Phê duyệt hoặc từ chối các yêu cầu từ Intern dựa trên thống kê hệ thống
+    </p>
+  </div>
+
+  @if (loading) {
+  <div class="flex justify-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+  </div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    @for (task of pendingTasks; track task.taskId) {
+    <div
+      class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all p-6"
+    >
+      <div class="flex justify-between items-start mb-6">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold"
+          >
+            {{ task.internEmail.substring(0, 1).toUpperCase() }}
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800">{{ task.internEmail }}</h3>
+            <p class="text-xs text-gray-500">
+              Gửi lúc: {{ task.taskCreateTime | date : 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+        </div>
+        <span
+          class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-wider"
+        >
+          {{ task.type }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="p-3 bg-gray-50 rounded-xl text-center">
+          <p class="text-[10px] text-gray-400 uppercase font-bold">Tổng buổi</p>
+          <p class="text-xl font-black text-gray-700">{{ task.totalAttendance }}</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-xl text-center">
+          <p class="text-[10px] text-green-500 uppercase font-bold">Đúng giờ</p>
+          <p class="text-xl font-black text-green-600">
+            {{ (task.onTimeRatio * 100).toFixed(0) }}%
+          </p>
+        </div>
+        <div class="p-3 bg-red-50 rounded-xl text-center">
+          <p class="text-[10px] text-red-400 uppercase font-bold">Về sớm</p>
+          <p class="text-xl font-black text-red-600">
+            {{ (task.earlyCheckoutRatio * 100).toFixed(0) }}%
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-3 mb-6">
+        <div class="flex items-center gap-2 text-sm">
+          <span class="font-bold text-gray-700">Thời gian:</span>
+          <span class="text-orange-600 font-semibold"
+            >{{ task.fromDate | date : 'dd/MM' }} - {{ task.toDate | date : 'dd/MM/yyyy' }}</span
+          >
+        </div>
+        <div>
+          <span class="text-sm font-bold text-gray-700 block mb-1">Lý do xin nghỉ:</span>
+          <p class="text-sm text-gray-600 italic border-l-4 border-gray-200 pl-3">
+            "{{ task.reason }}"
+          </p>
+        </div>
+        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-800">
+          <strong>Hệ thống đề xuất:</strong> {{ task.systemNote }}
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <textarea
+          [(ngModel)]="reviewComments[task.taskId]"
+          rows="2"
+          placeholder="Ghi chú cho Intern..."
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-orange-200 focus:border-orange-500 outline-none transition-all resize-none"
+        ></textarea>
+
+        <div class="flex gap-3">
+          <button
+            (click)="onReview(task.taskId, true)"
+            class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg shadow-green-100 transition-all active:scale-95"
+          >
+            Chấp nhận
+          </button>
+          <button
+            (click)="onReview(task.taskId, false)"
+            class="flex-1 py-3 bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 font-bold rounded-xl transition-all active:scale-95"
+          >
+            Từ chối
+          </button>
+        </div>
+      </div>
+    </div>
+    } @empty { @if (!loading) {
+    <div
+      class="col-span-full text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200"
+    >
+      <p class="text-gray-500 text-lg">Hiện tại không có yêu cầu nào cần phê duyệt 🎉</p>
+    </div>
+    } }
+  </div>
+</div>

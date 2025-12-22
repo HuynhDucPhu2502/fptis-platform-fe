@@ -18,6 +18,10 @@ export const DASHBOARD_ROUTES: Routes = [
     path: 'attendance',
     loadComponent: () => import('./pages/attendance/attendance').then((m) => m.Attendance),
   },
+
+  // ==========================================
+  // WORK REQUEST (INTERN SIDE)
+  // ==========================================
   {
     path: 'work-request',
     redirectTo: 'work-request/list',
@@ -32,6 +36,17 @@ export const DASHBOARD_ROUTES: Routes = [
     path: 'work-request/list',
     loadComponent: () =>
       import('./pages/work-request/list/work-request-list').then((m) => m.WorkRequestList),
+  },
+
+  // ==========================================
+  // MANAGER SECTION (MENTOR/ADMIN SIDE)
+  // ==========================================
+  {
+    path: 'work-request-manager',
+    loadComponent: () =>
+      import('./pages/work-request-manager/list/work-request-manager-list').then(
+        (m) => m.WorkRequestManagerList
+      ),
   },
   {
     path: 'users-management',

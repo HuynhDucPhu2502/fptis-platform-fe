@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, type OnInit } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStateService } from '../../../../state/auth-state.service';
 
@@ -11,6 +11,7 @@ interface MenuItem {
 
 @Component({
   selector: 'dashboard-sidebar',
+  standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './sidebar.html',
 })
@@ -29,6 +30,12 @@ export class Sidebar {
     { icon: 'document', label: 'Nhật Ký', href: 'work-log' },
     { icon: 'briefcase', label: 'Yêu Cầu Làm Việc', href: 'work-request' },
     {
+      icon: 'check-circle',
+      label: 'Duyệt yêu cầu',
+      href: 'work-request-manager',
+      requiredRole: 'ROLE_MENTOR',
+    },
+    {
       icon: 'users',
       label: 'Quản lý người dùng',
       href: 'users-management',
@@ -42,8 +49,7 @@ export class Sidebar {
 
     return this.allMenuItems.filter((item) => {
       if (!item.requiredRole) return true;
-      const hasRole = userRoles.includes(item.requiredRole);
-      return hasRole;
+      return userRoles.includes(item.requiredRole);
     });
   });
 }

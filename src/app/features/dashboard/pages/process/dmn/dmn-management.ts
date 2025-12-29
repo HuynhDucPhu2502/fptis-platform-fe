@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit,
+  type OnInit,
   OnDestroy,
   ChangeDetectorRef,
   inject,
@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// Modeler chính
 import DmnModeler from 'dmn-js/lib/Modeler';
 
 import { ProcessManagementService } from '../../../../../services/process-management.service';
@@ -31,7 +30,6 @@ type TabType = 'variables' | 'diagram' | 'settings';
   imports: [CommonModule, FormsModule],
   templateUrl: './dmn-management.html',
   styleUrls: ['./dmn-management.scss'],
-  // Tắt encapsulation để các tùy chỉnh CSS cho bảng DMN có tác dụng ngay lập tức
   encapsulation: ViewEncapsulation.None,
 })
 export class DmnManagement implements OnInit, OnDestroy {
@@ -99,6 +97,7 @@ export class DmnManagement implements OnInit, OnDestroy {
     });
   }
 
+  // Cải tiến: Chỉ fetch và import XML một lần duy nhất
   async loadDmnDiagram() {
     if (this.isDiagramLoaded) return;
     this.isLoading = true;
@@ -114,8 +113,6 @@ export class DmnManagement implements OnInit, OnDestroy {
 
         try {
           await this.dmnModeler.importXML(res.result);
-
-          // Mở view bảng quyết định (Decision Table) mặc định
           const views = this.dmnModeler.getViews();
           const tableView = views.find((v: any) => v.type === 'decisionTable');
           if (tableView) {
@@ -148,7 +145,7 @@ export class DmnManagement implements OnInit, OnDestroy {
       this.processService.deployProcess(request, file).subscribe({
         next: () => {
           alert('Lưu sơ đồ quy trình thành công!');
-          this.loadVariables(); // Đồng bộ lại Tab 1
+          this.loadVariables();
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -162,15 +159,11 @@ export class DmnManagement implements OnInit, OnDestroy {
     }
   }
 
-  saveVariables() {
-    console.log('[FPT IS] Saving Default Values:', this.variables);
-    alert('Lưu tham số cấu hình thành công!');
-  }
-
   setActiveTab(tab: TabType) {
     this.activeTab = tab;
+    // Khi chuyển sang Tab diagram, nếu chưa load thì mới gọi load
     if (tab === 'diagram') {
-      setTimeout(() => this.loadDmnDiagram(), 100);
+      setTimeout(() => this.loadDmnDiagram(), 50);
     }
   }
 

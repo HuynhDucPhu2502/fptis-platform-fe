@@ -120,7 +120,7 @@ export class ProcessList implements OnInit {
       return;
     }
 
-    if (!this.deployForm.name || !this.deployForm.processCode) {
+    if (!this.deployForm.processCode) {
       alert('Vui lòng điền đầy đủ thông tin');
       return;
     }

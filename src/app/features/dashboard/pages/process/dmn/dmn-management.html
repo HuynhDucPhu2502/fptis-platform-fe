@@ -61,16 +61,6 @@
       </div>
 
       <div *ngIf="activeTab === 'variables'" class="p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-bold text-gray-800">Cấu hình giá trị mặc định</h3>
-          <button
-            (click)="saveVariables()"
-            class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 shadow-sm transition-colors font-medium"
-          >
-            Lưu tham số
-          </button>
-        </div>
-
         <div class="border border-gray-100 rounded-xl overflow-hidden">
           <table class="w-full text-left">
             <thead class="bg-gray-50 border-b border-gray-100">
@@ -82,9 +72,6 @@
                   Hiển thị
                 </th>
                 <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Kiểu</th>
-                <th class="p-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  Giá trị mặc định
-                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -97,14 +84,6 @@
                     >{{ v.dataType }}</span
                   >
                 </td>
-                <td class="p-4">
-                  <input
-                    type="text"
-                    [(ngModel)]="v.defaultValue"
-                    class="w-full border border-gray-200 rounded-md p-2 text-sm focus:ring-2 focus:ring-orange-200 outline-none"
-                    placeholder="Nhập giá trị..."
-                  />
-                </td>
               </tr>
             </tbody>
           </table>
@@ -114,7 +93,7 @@
         </div>
       </div>
 
-      <div *ngIf="activeTab === 'diagram'" class="p-4">
+      <div [hidden]="activeTab !== 'diagram'" class="p-4">
         <div class="flex justify-end mb-4">
           <button
             (click)="saveDiagram()"
@@ -123,7 +102,6 @@
             Lưu sơ đồ mới
           </button>
         </div>
-
         <div
           #dmnContainer
           class="dmn-container h-[700px] border border-gray-200 rounded-xl bg-white overflow-hidden shadow-inner"

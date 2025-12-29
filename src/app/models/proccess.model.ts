@@ -23,6 +23,5 @@ export type ProcessTaskResponse = {
 export type ProcessVariableResponse = {
   variableName: string;
   displayName: string;
-  defaultValue: string;
   dataType: string;
 };
